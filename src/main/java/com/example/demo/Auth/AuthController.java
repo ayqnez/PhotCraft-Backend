@@ -19,26 +19,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(
-            @RequestParam String username,
-            @RequestParam String email,
-            @RequestParam String password,
-            @RequestParam String role,
-            @RequestParam(required = false) String specialization
-    ) {
+    public String register(@RequestBody User user) {
         List<User> existing = userRepository.findAll();
-        boolean emailExists = existing.stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(email));
+        boolean emailExists = existing.stream()
+                .anyMatch(u -> u.getEmail().equalsIgnoreCase(user.getEmail()));
 
         if (emailExists) {
             return "User with this email already exists";
         }
-
-        User user = new User();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setRole(role);
-        user.setSpecialization(specialization);
 
         userRepository.save(user);
         return "Registration successful";
